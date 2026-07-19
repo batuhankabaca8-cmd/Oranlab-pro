@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: oranlab-pro
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/status
+    autoDeploy: true

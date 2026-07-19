@@ -1,0 +1,18 @@
+{
+  "name": "oranlab-pro",
+  "version": "4.2.0",
+  "private": true,
+  "description": "ORANLAB PRO Mobile v4.2 telefon ve Render uyumlu futbol oran analiz sitesi",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "express": "^4.21.2"
+  }
+}
