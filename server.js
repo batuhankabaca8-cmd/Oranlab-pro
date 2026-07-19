@@ -103,27 +103,34 @@ function topScores(scoreMap, total) {
 
 app.get('/api/status', (_req, res) => {
   const count = db.prepare('SELECT COUNT(*) AS count FROM matches').get().count;
-  res.json({ ok: true, version: '4.6-mobile', records: count });
+  const years = db.prepare(`SELECT DISTINCT CAST(year AS INTEGER) AS year FROM matches WHERE CAST(year AS INTEGER) BETWEEN 1900 AND 2100 ORDER BY year DESC`).all().map((row) => row.year);
+  res.json({ ok: true, version: '4.8-mobile', records: count, years });
 });
 
 app.get('/api/search', (req, res) => {
   try {
     const targets = { ms1: number(req.query.ms1), msx: number(req.query.msx), ms2: number(req.query.ms2) };
     const barrier = String(req.query.barem || '').trim();
-    const mode = req.query.matchType === 'exact' || req.query.mode === 'exact' ? 'exact' : 'partial';
-    const tolerance = Math.max(0, Math.min(number(req.query.tolerance) ?? 0.1, 2));
-    const displayLimit = Math.max(20, Math.min(Number(req.query.limit) || 100, 300));
+    const tolerance = 0.5;
+    const displayLimit = 100;
+    const selectedYear = Number.parseInt(String(req.query.year || ''), 10);
+    const hasYear = Number.isInteger(selectedYear) && selectedYear >= 1900 && selectedYear <= 2100;
     if (Object.values(targets).every((v) => v === null) && !barrier) return res.status(400).json({ error: 'En az bir arama alanı doldurulmalı.' });
 
     const clauses = []; const params = {};
     for (const key of ['ms1', 'msx', 'ms2']) {
       if (targets[key] === null) continue;
-      if (mode === 'exact') { clauses.push(`${key} = @${key}`); params[key] = targets[key]; }
-      else { clauses.push(`${key} BETWEEN @${key}Min AND @${key}Max`); params[`${key}Min`] = targets[key] - tolerance; params[`${key}Max`] = targets[key] + tolerance; }
+      clauses.push(`${key} BETWEEN @${key}Min AND @${key}Max`);
+      params[`${key}Min`] = targets[key] - tolerance;
+      params[`${key}Max`] = targets[key] + tolerance;
     }
     if (barrier) {
-      if (mode === 'exact') { clauses.push('TRIM(barrier) = @barrier'); params.barrier = barrier; }
-      else { clauses.push('TRIM(barrier) LIKE @barrier'); params.barrier = `%${barrier}%`; }
+      clauses.push('TRIM(barrier) LIKE @barrier');
+      params.barrier = `%${barrier}%`;
+    }
+    if (hasYear) {
+      clauses.push('CAST(year AS INTEGER) = @selectedYear');
+      params.selectedYear = selectedYear;
     }
     const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
     const total = db.prepare(`SELECT COUNT(*) AS count FROM matches ${where}`).get(params).count;
@@ -172,7 +179,7 @@ async function startServer() {
     await extractDatabase();
     db = new Database(runtimeDb, { readonly: true });
     db.pragma('query_only = ON');
-    app.listen(PORT, '0.0.0.0', () => console.log(`ORANLAB PRO Mobile v4.6 http://0.0.0.0:${PORT}`));
+    app.listen(PORT, '0.0.0.0', () => console.log(`ORANLAB PRO Mobile v4.8 http://0.0.0.0:${PORT}`));
   } catch (error) {
     console.error('Başlatma hatası:', error);
     process.exit(1);

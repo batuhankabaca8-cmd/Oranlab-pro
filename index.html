@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="ORANLAB PRO - Profesyonel futbol oran analiz paneli" />
-  <title>ORANLAB PRO v4.0</title>
+  <title>ORANLAB PRO v4.8</title>
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,7 +27,7 @@
       </a>
 
       <div class="header-actions">
-        <span class="version-badge">v4.0</span>
+        <span class="version-badge">v4.8</span>
         <button class="icon-button" id="themeButton" type="button" aria-label="Temayı değiştir">☾</button>
       </div>
     </div>
@@ -38,7 +38,7 @@
       <div class="hero-copy">
         <span class="eyebrow">GEÇMİŞ VERİLERLE ANALİZ</span>
         <h1>Oranları gir, eşleşen maçları tek ekranda incele.</h1>
-        <p>MS1, MSX, MS2 ve barem değerlerine göre arama yap. Tam veya toleranslı eşleşme modunu seç.</p>
+        <p>MS1, MSX, MS2 ve barem değerlerine göre otomatik ±0,50 toleransla arama yap.</p>
       </div>
 
       <div class="hero-status">
@@ -79,30 +79,14 @@
           </label>
         </div>
 
-        <div class="options-grid">
-          <fieldset class="option-group">
-            <legend>Eşleşme modu</legend>
-            <label class="segmented-option">
-              <input type="radio" name="matchType" value="partial" checked />
-              <span>Kısmi eşleşme</span>
-            </label>
-            <label class="segmented-option">
-              <input type="radio" name="matchType" value="exact" />
-              <span>Tam eşleşme</span>
-            </label>
-          </fieldset>
-
+        <div class="options-grid simplified-options">
           <label class="field compact-field">
-            <span>Tolerans</span>
-            <select id="tolerance" name="tolerance">
-              <option value="0.05">±0.05</option>
-              <option value="0.10" selected>±0.10</option>
-              <option value="0.20">±0.20</option>
-              <option value="0.30">±0.30</option>
+            <span>Yıl</span>
+            <select id="year" name="year">
+              <option value="">Tüm yıllar</option>
             </select>
           </label>
 
-          <label class="field compact-field"><span>Sonuç sayısı</span><select id="limit" name="limit"><option value="50">50</option><option value="100" selected>100</option><option value="200">200</option><option value="300">300</option></select></label>
           <button class="primary-button" type="submit">
             <span>Analiz Et</span>
             <strong>→</strong>
@@ -152,39 +136,6 @@
       </article>
     </section>
 
-    <section class="charts-section">
-      <div class="section-heading compact-heading">
-        <div><span class="section-kicker">GRAFİKLER</span><h2>Sonuç ve gol dağılımı</h2></div>
-        <span class="muted-text">Filtrelenen örnekleme göre</span>
-      </div>
-      <div class="charts-grid">
-        <article class="chart-card glass-panel">
-          <div class="chart-title"><div><span class="section-kicker">MAÇ SONUCU</span><h3>1 · X · 2 dağılımı</h3></div></div>
-          <div class="donut-layout">
-            <div class="donut-chart" id="outcomeDonut"><div><strong id="donutCenter">--</strong><small>maç</small></div></div>
-            <div class="chart-legend">
-              <div><i class="legend-one"></i><span>MS1</span><strong id="legendMs1">--%</strong></div>
-              <div><i class="legend-x"></i><span>MSX</span><strong id="legendMsx">--%</strong></div>
-              <div><i class="legend-two"></i><span>MS2</span><strong id="legendMs2">--%</strong></div>
-            </div>
-          </div>
-        </article>
-        <article class="chart-card glass-panel">
-          <div class="chart-title"><div><span class="section-kicker">TOPLAM GOL</span><h3>Gol aralığı dağılımı</h3></div></div>
-          <div class="bar-chart" id="goalBars">
-            <div class="bar-row"><span>0–1 Gol</span><div><i style="width:0%"></i></div><strong>--%</strong></div>
-            <div class="bar-row"><span>2 Gol</span><div><i style="width:0%"></i></div><strong>--%</strong></div>
-            <div class="bar-row"><span>3 Gol</span><div><i style="width:0%"></i></div><strong>--%</strong></div>
-            <div class="bar-row"><span>4+ Gol</span><div><i style="width:0%"></i></div><strong>--%</strong></div>
-          </div>
-        </article>
-        <article class="chart-card glass-panel league-chart-card">
-          <div class="chart-title"><div><span class="section-kicker">LİGLER</span><h3>En çok eşleşen ligler</h3></div></div>
-          <div class="league-bars" id="leagueBars"><div class="chart-empty">Analiz sonrası gösterilir.</div></div>
-        </article>
-      </div>
-    </section>
-
     <section class="results-panel glass-panel">
       <div class="section-heading">
         <div>
@@ -225,7 +176,7 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container">ORANLAB PRO © 2026 · V4.0 mobil analiz paneli</div>
+    <div class="container">ORANLAB PRO © 2026 · V4.8 mobil analiz paneli</div>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
