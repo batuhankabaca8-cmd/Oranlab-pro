@@ -10,22 +10,61 @@ const dataDir = __dirname;
 const packedDb = path.join(dataDir, 'oranlab.db.gz');
 const runtimeDb = process.env.ORANLAB_DB_PATH || path.join('/tmp', 'oranlab.db');
 
-function readPackedDatabase() {
-  if (fs.existsSync(packedDb)) return fs.readFileSync(packedDb);
+async function extractDatabase() {
+  if (fs.existsSync(runtimeDb) && fs.statSync(runtimeDb).size > 1024 * 1024) return;
+
+  fs.mkdirSync(path.dirname(runtimeDb), { recursive: true });
+  const tempDb = `${runtimeDb}.partial`;
+  if (fs.existsSync(tempDb)) fs.unlinkSync(tempDb);
+
   const parts = fs.readdirSync(dataDir)
     .filter((name) => /^oranlab\.db\.gz\.part\d+$/.test(name))
-    .sort();
-  if (!parts.length) throw new Error('Sıkıştırılmış veritabanı parçaları bulunamadı.');
-  return Buffer.concat(parts.map((name) => fs.readFileSync(path.join(dataDir, name))));
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+  if (!fs.existsSync(packedDb) && !parts.length) {
+    throw new Error('Sıkıştırılmış veritabanı veya parçaları bulunamadı.');
+  }
+
+  const gunzip = zlib.createGunzip();
+  const output = fs.createWriteStream(tempDb);
+  gunzip.pipe(output);
+
+  const feedFile = (filePath) => new Promise((resolve, reject) => {
+    const input = fs.createReadStream(filePath);
+    input.on('error', reject);
+    input.on('end', resolve);
+    input.pipe(gunzip, { end: false });
+  });
+
+  try {
+    if (fs.existsSync(packedDb)) {
+      await feedFile(packedDb);
+    } else {
+      for (const name of parts) {
+        console.log(`Veritabanı parçası açılıyor: ${name}`);
+        await feedFile(path.join(dataDir, name));
+      }
+    }
+
+    gunzip.end();
+    await new Promise((resolve, reject) => {
+      output.on('finish', resolve);
+      output.on('error', reject);
+      gunzip.on('error', reject);
+    });
+
+    if (fs.statSync(tempDb).size < 50 * 1024 * 1024) {
+      throw new Error('Açılan veritabanı beklenenden küçük.');
+    }
+    fs.renameSync(tempDb, runtimeDb);
+    console.log(`Veritabanı hazır: ${runtimeDb}`);
+  } catch (error) {
+    if (fs.existsSync(tempDb)) fs.unlinkSync(tempDb);
+    throw error;
+  }
 }
 
-if (!fs.existsSync(runtimeDb)) {
-  fs.mkdirSync(path.dirname(runtimeDb), { recursive: true });
-  fs.writeFileSync(runtimeDb, zlib.gunzipSync(readPackedDatabase()));
-}
-const db = new Database(runtimeDb, { readonly: true });
-db.pragma('query_only = ON');
-app.use(express.static(__dirname, { extensions: ['html'] }));
+let db;
 
 function number(value) {
   if (value === undefined || value === null || value === '') return null;
@@ -119,4 +158,17 @@ app.get('/api/search', (req, res) => {
 });
 
 app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.listen(PORT, () => console.log(`ORANLAB PRO Mobile v4.2 http://localhost:${PORT}`));
+
+async function startServer() {
+  try {
+    await extractDatabase();
+    db = new Database(runtimeDb, { readonly: true });
+    db.pragma('query_only = ON');
+    app.listen(PORT, '0.0.0.0', () => console.log(`ORANLAB PRO Mobile v4.5 http://0.0.0.0:${PORT}`));
+  } catch (error) {
+    console.error('Başlatma hatası:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
