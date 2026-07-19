@@ -8,10 +8,10 @@
 
   if (localStorage.getItem('oranlab-theme') === 'light') {
     document.body.classList.add('light-theme');
-    themeButton.textContent = '☀';
+    if (themeButton) themeButton.textContent = '☀';
   }
 
-  themeButton.addEventListener('click', () => {
+  if (themeButton) themeButton.addEventListener('click', () => {
     document.body.classList.toggle('light-theme');
     const light = document.body.classList.contains('light-theme');
     localStorage.setItem('oranlab-theme', light ? 'light' : 'dark');
@@ -21,26 +21,26 @@
   fetch('/api/status')
     .then((response) => response.json())
     .then((data) => {
-      statusText.textContent = `${data.records.toLocaleString('tr-TR')} maç kaydı aktif · v${data.version}`;
+      if (statusText) statusText.textContent = `${data.records.toLocaleString('tr-TR')} maç kaydı aktif · v${data.version}`;
       const years = Array.isArray(data.years) ? data.years : [];
-      yearSelect.innerHTML = '<option value="">Tüm yıllar</option>' + years
+      if (yearSelect) yearSelect.innerHTML = '<option value="">Tüm yıllar</option>' + years
         .map((year) => `<option value="${year}">${year}</option>`)
         .join('');
     })
     .catch(() => {
-      statusText.textContent = 'Sunucu bağlantısı bekleniyor';
+      if (statusText) statusText.textContent = 'Sunucu bağlantısı bekleniyor';
     });
 
-  clearButton.addEventListener('click', () => {
+  if (clearButton) clearButton.addEventListener('click', () => {
     form.reset();
-    yearSelect.value = '';
-    tableSearch.value = '';
+    if (yearSelect) yearSelect.value = '';
+    if (tableSearch) tableSearch.value = '';
     OranlabUI.resetStats();
     OranlabUI.showEmptyState();
     OranlabUI.showToast('Form temizlendi.');
   });
 
-  form.addEventListener('submit', async (event) => {
+  if (form) form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const params = new URLSearchParams(new FormData(form));
     params.set('tolerance', '0.50');
@@ -65,7 +65,7 @@
     }
   });
 
-  tableSearch.addEventListener('input', () => {
+  if (tableSearch) tableSearch.addEventListener('input', () => {
     const query = tableSearch.value.toLocaleLowerCase('tr-TR');
     document.querySelectorAll('#tableBody tr:not(.empty-row)').forEach((row) => {
       row.hidden = !row.textContent.toLocaleLowerCase('tr-TR').includes(query);
