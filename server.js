@@ -10,6 +10,14 @@ const dataDir = __dirname;
 const packedDb = path.join(dataDir, 'oranlab.db.gz');
 const runtimeDb = process.env.ORANLAB_DB_PATH || path.join('/tmp', 'oranlab.db');
 
+// HTML, CSS, JavaScript ve logo dosyalarını doğrudan yayınla.
+// Bu satır API rotalarından önce olmalı; aksi hâlde CSS/JS istekleri index.html döndürür.
+app.use(express.static(__dirname, {
+  index: false,
+  maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0,
+  etag: true,
+}));
+
 async function extractDatabase() {
   if (fs.existsSync(runtimeDb) && fs.statSync(runtimeDb).size > 1024 * 1024) return;
 
@@ -95,7 +103,7 @@ function topScores(scoreMap, total) {
 
 app.get('/api/status', (_req, res) => {
   const count = db.prepare('SELECT COUNT(*) AS count FROM matches').get().count;
-  res.json({ ok: true, version: '4.2-mobile', records: count });
+  res.json({ ok: true, version: '4.6-mobile', records: count });
 });
 
 app.get('/api/search', (req, res) => {
@@ -164,7 +172,7 @@ async function startServer() {
     await extractDatabase();
     db = new Database(runtimeDb, { readonly: true });
     db.pragma('query_only = ON');
-    app.listen(PORT, '0.0.0.0', () => console.log(`ORANLAB PRO Mobile v4.5 http://0.0.0.0:${PORT}`));
+    app.listen(PORT, '0.0.0.0', () => console.log(`ORANLAB PRO Mobile v4.6 http://0.0.0.0:${PORT}`));
   } catch (error) {
     console.error('Başlatma hatası:', error);
     process.exit(1);
