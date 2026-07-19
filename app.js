@@ -43,7 +43,7 @@
   if (form) form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const params = new URLSearchParams(new FormData(form));
-    params.set('tolerance', '0.50');
+    params.set('tolerance', '0.05');
     if (![params.get('ms1'), params.get('msx'), params.get('ms2'), params.get('barem')].some(Boolean)) {
       return OranlabUI.showToast('En az bir oran alanı doldurmalısın.');
     }

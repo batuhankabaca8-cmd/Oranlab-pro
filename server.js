@@ -14,8 +14,15 @@ const runtimeDb = process.env.ORANLAB_DB_PATH || path.join('/tmp', 'oranlab.db')
 // Bu satır API rotalarından önce olmalı; aksi hâlde CSS/JS istekleri index.html döndürür.
 app.use(express.static(__dirname, {
   index: false,
-  maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0,
-  etag: true,
+  maxAge: 0,
+  etag: false,
+  setHeaders(res, filePath) {
+    if (/\.(?:html|js|css)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  },
 }));
 
 async function extractDatabase() {
@@ -104,14 +111,14 @@ function topScores(scoreMap, total) {
 app.get('/api/status', (_req, res) => {
   const count = db.prepare('SELECT COUNT(*) AS count FROM matches').get().count;
   const years = db.prepare(`SELECT DISTINCT CAST(year AS INTEGER) AS year FROM matches WHERE CAST(year AS INTEGER) BETWEEN 1900 AND 2100 ORDER BY year DESC`).all().map((row) => row.year);
-  res.json({ ok: true, version: '4.8-mobile', records: count, years });
+  res.json({ ok: true, version: '5.0-mobile', records: count, years });
 });
 
 app.get('/api/search', (req, res) => {
   try {
     const targets = { ms1: number(req.query.ms1), msx: number(req.query.msx), ms2: number(req.query.ms2) };
     const barrier = String(req.query.barem || '').trim();
-    const tolerance = 0.5;
+    const tolerance = 0.05;
     const displayLimit = 100;
     const selectedYear = Number.parseInt(String(req.query.year || ''), 10);
     const hasYear = Number.isInteger(selectedYear) && selectedYear >= 1900 && selectedYear <= 2100;
