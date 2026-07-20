@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="ORANLAB PRO - Profesyonel futbol oran analiz paneli" />
-  <title>ORANLAB PRO v4.8</title>
+  <title>ORANLAB PRO v5.2</title>
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=5.0.0" />
-  <link rel="stylesheet" href="responsive.css?v=5.0.0" />
+  <link rel="stylesheet" href="style.css?v=5.2.0" />
+  <link rel="stylesheet" href="responsive.css?v=5.2.0" />
 </head>
 <body>
   <div class="page-glow page-glow-one"></div>
@@ -27,7 +27,7 @@
       </a>
 
       <div class="header-actions">
-        <span class="version-badge">v4.8</span>
+        <span class="version-badge">v5.2</span>
         <button class="icon-button" id="themeButton" type="button" aria-label="Temayı değiştir">☾</button>
       </div>
     </div>
@@ -38,7 +38,7 @@
       <div class="hero-copy">
         <span class="eyebrow">GEÇMİŞ VERİLERLE ANALİZ</span>
         <h1>Oranları gir, eşleşen maçları tek ekranda incele.</h1>
-        <p>MS1, MSX, MS2 ve barem değerlerine göre otomatik ±0,05 toleransla arama yap.</p>
+        <p>Oranlarda tam eşleşme veya ±0,02 tolerans kullan. Barem her zaman tam eşleşir.</p>
       </div>
 
       <div class="hero-status">
@@ -84,6 +84,14 @@
             <span>Yıl</span>
             <select id="year" name="year">
               <option value="">Tüm yıllar</option>
+            </select>
+          </label>
+
+          <label class="field compact-field">
+            <span>Eşleşme Türü</span>
+            <select id="matchMode" name="matchMode">
+              <option value="tolerance">±0,02 Tolerans</option>
+              <option value="exact">Tam Eşleşme</option>
             </select>
           </label>
 
@@ -176,12 +184,12 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container">ORANLAB PRO © 2026 · V4.8 mobil analiz paneli</div>
+    <div class="container">ORANLAB PRO © 2026 · V5.2 mobil analiz paneli</div>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="ui.js?v=5.0.0"></script>
-  <script src="app.js?v=5.0.0"></script>
+  <script src="ui.js?v=5.2.0"></script>
+  <script src="app.js?v=5.2.0"></script>
 </body>
 </html>
