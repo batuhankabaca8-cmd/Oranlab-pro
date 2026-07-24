@@ -5,6 +5,8 @@
   const tableSearch = document.getElementById('tableSearch');
   const statusText = document.querySelector('.hero-status small');
   const yearSelect = document.getElementById('year');
+  const halfHome = document.getElementById('halfHome');
+  const halfAway = document.getElementById('halfAway');
 
   if (localStorage.getItem('oranlab-theme') === 'light') {
     document.body.classList.add('light-theme');
@@ -43,9 +45,21 @@
   if (form) form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const params = new URLSearchParams(new FormData(form));
-    const matchMode = params.get('matchMode') === 'exact' ? 'exact' : 'tolerance';
+    const allowedModes = ['exact', 'tolerance-002', 'tolerance-005'];
+    const matchMode = allowedModes.includes(params.get('matchMode')) ? params.get('matchMode') : 'tolerance-002';
     params.set('matchMode', matchMode);
-    params.set('tolerance', matchMode === 'exact' ? '0' : '0.02');
+    params.set('tolerance', matchMode === 'exact' ? '0' : (matchMode === 'tolerance-005' ? '0.05' : '0.02'));
+
+    const halfHomeValue = String(params.get('halfHome') || '').trim();
+    const halfAwayValue = String(params.get('halfAway') || '').trim();
+    if ((halfHomeValue && !halfAwayValue) || (!halfHomeValue && halfAwayValue)) {
+      return OranlabUI.showToast('İlk yarı skoru için iki kutuyu da doldurmalısın.');
+    }
+    if (halfHomeValue && halfAwayValue) {
+      params.set('halfScore', `${Number(halfHomeValue)}-${Number(halfAwayValue)}`);
+    } else {
+      params.delete('halfScore');
+    }
     if (![params.get('ms1'), params.get('msx'), params.get('ms2'), params.get('barem')].some(Boolean)) {
       return OranlabUI.showToast('En az bir oran alanı doldurmalısın.');
     }
@@ -57,7 +71,10 @@
       if (!response.ok) throw new Error(data.error || 'Arama başarısız.');
       OranlabUI.updateStats(data);
       OranlabUI.renderRows(data.rows);
-      OranlabUI.showToast(`${data.total.toLocaleString('tr-TR')} eşleşme bulundu.`);
+      const message = data.halfScore
+        ? `${data.oddsTotal.toLocaleString('tr-TR')} oran eşleşmesi · İlk yarı ${data.halfScore} sonrası ${data.total.toLocaleString('tr-TR')} maç`
+        : `${data.total.toLocaleString('tr-TR')} eşleşme bulundu.`;
+      OranlabUI.showToast(message);
     } catch (error) {
       OranlabUI.resetStats();
       OranlabUI.showEmptyState('Bağlantı kurulamadı', error.message);

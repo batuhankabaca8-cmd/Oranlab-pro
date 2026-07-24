@@ -111,15 +111,19 @@ function topScores(scoreMap, total) {
 app.get('/api/status', (_req, res) => {
   const count = db.prepare('SELECT COUNT(*) AS count FROM matches').get().count;
   const years = db.prepare(`SELECT DISTINCT CAST(year AS INTEGER) AS year FROM matches WHERE CAST(year AS INTEGER) BETWEEN 1900 AND 2100 ORDER BY year DESC`).all().map((row) => row.year);
-  res.json({ ok: true, version: '5.2-mobile', records: count, years });
+  res.json({ ok: true, version: '5.3-mobile', records: count, years });
 });
 
 app.get('/api/search', (req, res) => {
   try {
     const targets = { ms1: number(req.query.ms1), msx: number(req.query.msx), ms2: number(req.query.ms2) };
     const barrier = String(req.query.barem || '').trim();
-    const matchMode = req.query.matchMode === 'exact' ? 'exact' : 'tolerance';
-    const tolerance = matchMode === 'exact' ? 0 : 0.02;
+    const allowedModes = new Set(['exact', 'tolerance-002', 'tolerance-005']);
+    const matchMode = allowedModes.has(req.query.matchMode) ? req.query.matchMode : 'tolerance-002';
+    const tolerance = matchMode === 'exact' ? 0 : (matchMode === 'tolerance-005' ? 0.05 : 0.02);
+    const halfScore = String(req.query.halfScore || '').trim();
+    const parsedHalfScore = score(halfScore);
+    if (halfScore && !parsedHalfScore) return res.status(400).json({ error: 'İlk yarı skoru geçersiz.' });
     const displayLimit = 100;
     const selectedYear = Number.parseInt(String(req.query.year || ''), 10);
     const hasYear = Number.isInteger(selectedYear) && selectedYear >= 1900 && selectedYear <= 2100;
@@ -145,6 +149,15 @@ app.get('/api/search', (req, res) => {
       clauses.push('CAST(year AS INTEGER) = @selectedYear');
       params.selectedYear = selectedYear;
     }
+
+    const oddsWhere = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
+    const oddsTotal = db.prepare(`SELECT COUNT(*) AS count FROM matches ${oddsWhere}`).get(params).count;
+
+    if (parsedHalfScore) {
+      clauses.push("REPLACE(REPLACE(TRIM(half_score), ' ', ''), ':', '-') = @halfScore");
+      params.halfScore = `${parsedHalfScore[0]}-${parsedHalfScore[1]}`;
+    }
+
     const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
     const total = db.prepare(`SELECT COUNT(*) AS count FROM matches ${where}`).get(params).count;
     const sampleLimit = Math.min(Math.max(displayLimit * 30, 5000), 25000);
@@ -179,7 +192,7 @@ app.get('/api/search', (req, res) => {
     const topLeagues=[...leagueMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0,6).map(([league,count])=>({league,count,percentage:percentage(count,valid)}));
     const top = Math.max(stats.ms1, stats.msx, stats.ms2, stats.iy05, stats.ms15, stats.ms25, stats.kg);
     const confidence = Math.min(99, Math.round((Math.min(valid, 1000) / 1000 * 35) + (top * .65)));
-    res.json({ total, shown:rows.length, sampleSize:sample.length, matchMode, tolerance, rows, stats, topScores:topScores(scoreMap,valid), confidence, goalDistribution, topLeagues });
+    res.json({ oddsTotal, total, shown:rows.length, sampleSize:sample.length, matchMode, tolerance, halfScore: parsedHalfScore ? `${parsedHalfScore[0]}-${parsedHalfScore[1]}` : '', rows, stats, topScores:topScores(scoreMap,valid), confidence, goalDistribution, topLeagues });
   } catch (error) {
     console.error(error); res.status(500).json({ error: 'Arama sırasında bir hata oluştu.' });
   }
@@ -192,7 +205,7 @@ async function startServer() {
     await extractDatabase();
     db = new Database(runtimeDb, { readonly: true });
     db.pragma('query_only = ON');
-    app.listen(PORT, '0.0.0.0', () => console.log(`ORANLAB PRO Mobile v5.2 http://0.0.0.0:${PORT}`));
+    app.listen(PORT, '0.0.0.0', () => console.log(`ORANLAB PRO Mobile v5.3 http://0.0.0.0:${PORT}`));
   } catch (error) {
     console.error('Başlatma hatası:', error);
     process.exit(1);
