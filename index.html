@@ -1,44 +1,138 @@
-<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="ORANLAB PRO futbol oran analiz paneli"><title>ORANLAB PRO V6</title><link rel="icon" href="logo.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css?v=6.0"><link rel="stylesheet" href="responsive.css?v=6.0"></head>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ORANLAB PRO futbol oran analiz paneli">
+  <title>ORANLAB PRO V7</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=7.0">
+  <link rel="stylesheet" href="responsive.css?v=7.0">
+</head>
 <body>
-<div class="app-shell">
-<aside class="sidebar">
-  <a class="brand" href="#"><img src="logo.svg" alt="ORANLAB PRO"><div><strong>ORANLAB</strong><span>PRO</span></div></a>
-  <nav><a class="active" href="#analysis"><i>⌁</i>Analiz</a><a href="#stats"><i>◫</i>İstatistikler</a><a href="#matches"><i>⚽</i>Eşleşen Maçlar</a><a href="#"><i>◷</i>Geçmiş</a></nav>
-  <div class="sidebar-card"><small>VERİTABANI</small><strong id="dbCount">Bağlanıyor...</strong><span><b></b>Sistem aktif</span></div>
-  <div class="sidebar-bottom"><button id="themeButton" class="side-button">☾ <span>Tema</span></button><span class="version">V6.0</span></div>
-</aside>
-<main class="workspace">
-<header class="topbar"><div><p>FUTBOL ORAN ANALİZ MERKEZİ</p><h1>Analiz Dashboard</h1></div><div class="top-actions"><div class="live"><b></b>Canlı sistem</div><button class="avatar">OP</button></div></header>
-<section id="analysis" class="analysis-layout">
-  <article class="panel input-panel">
-    <div class="panel-head"><div><span class="kicker">YENİ ANALİZ</span><h2>Maç oranlarını gir</h2></div><button id="clearButton" class="ghost">Temizle</button></div>
-    <form id="analysisForm">
-      <div class="odds-grid"><label><span>MS1</span><input id="ms1" name="ms1" type="number" step="0.01" min="1" placeholder="1.75"></label><label><span>MSX</span><input id="msx" name="msx" type="number" step="0.01" min="1" placeholder="3.40"></label><label><span>MS2</span><input id="ms2" name="ms2" type="number" step="0.01" min="1" placeholder="4.80"></label></div>
-      <div class="control-grid">
-        <label><span>Barem</span><input id="barem" name="barem" inputmode="decimal" placeholder="2.5"></label>
-        <label><span>Yıl</span><select id="year" name="year"><option value="">Tüm yıllar</option></select></label>
-      </div>
-      <div class="mode-row"><span>Eşleşme Türü</span><div class="segmented"><label><input type="radio" name="matchMode" value="exact"><b>Tam</b></label><label><input type="radio" name="matchMode" value="tolerance-002" checked><b>±0,02</b></label><label><input type="radio" name="matchMode" value="tolerance-005"><b>±0,05</b></label></div></div>
-      <div class="half-row"><div><span>İlk Yarı Skoru</span><small>Boş bırakılırsa filtre uygulanmaz</small></div><div class="score-input"><input id="halfHome" name="halfHome" type="number" inputmode="numeric" min="0" max="20" placeholder="0"><b>-</b><input id="halfAway" name="halfAway" type="number" inputmode="numeric" min="0" max="20" placeholder="0"></div></div>
-      <button class="analyze" type="submit"><span>Analiz Et</span><b>→</b></button>
-    </form>
-  </article>
-  <aside class="panel system-panel"><span class="kicker">SİSTEM DURUMU</span><div class="radar"><span></span><strong>Hazır</strong></div><p class="hero-status"><small>Excel veritabanı bağlantısı kontrol ediliyor</small></p><div class="mini-stats"><div><small>Arama modu</small><strong>Akıllı filtre</strong></div><div><small>Barem</small><strong>Tam eşleşme</strong></div></div></aside>
-</section>
-<section id="stats" class="stats-section"><div class="section-title"><div><span class="kicker">ANALİZ SONUÇLARI</span><h2>Öne çıkan göstergeler</h2></div><span id="resultCount">0 eşleşme</span></div>
-<div class="stats-grid">
-<article class="metric green"><div><span>MS1</span><small>Ev sahibi</small></div><strong id="statMs1">--%</strong><i><b></b></i></article>
-<article class="metric blue"><div><span>MSX</span><small>Beraberlik</small></div><strong id="statMsx">--%</strong><i><b></b></i></article>
-<article class="metric purple"><div><span>MS2</span><small>Deplasman</small></div><strong id="statMs2">--%</strong><i><b></b></i></article>
-<article class="metric orange"><div><span>KG Var</span><small>Karşılıklı gol</small></div><strong id="statKg">--%</strong><i><b></b></i></article>
-<article class="metric cyan"><div><span>İY 0.5 Üst</span><small>İlk yarıda gol</small></div><strong id="statIy05">--%</strong><i><b></b></i></article>
-<article class="metric red"><div><span>2.5 Üst</span><small>Toplam gol</small></div><strong id="statMs25">--%</strong><i><b></b></i></article>
-</div></section>
-<section class="insight-grid">
-<article class="panel confidence"><div><span class="kicker">VERİ GÜVENİ</span><h2>Güven skoru</h2></div><div class="confidence-body"><div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50"></circle><circle id="confidenceRing" cx="60" cy="60" r="50"></circle></svg><div><strong id="confidenceValue">--</strong><span>/100</span></div></div><div><h3 id="confidenceLabel">Analiz bekleniyor</h3><p id="sampleInfo">Oranları girdikten sonra örneklem güveni hesaplanır.</p><div class="confidence-track"><i id="confidenceBar"></i></div></div></div></article>
-<article class="panel scores"><div><span class="kicker">TAHMİN ÖZETİ</span><h2>En olası skorlar</h2></div><div id="scorePodium" class="score-podium"><div><span>01</span><strong>--</strong><small>--%</small></div><div><span>02</span><strong>--</strong><small>--%</small></div><div><span>03</span><strong>--</strong><small>--%</small></div></div></article>
-<article class="panel quick-stats"><span class="kicker">GOL VERİLERİ</span><div><small>1.5 Üst</small><strong id="statMs15">--%</strong></div><div><small>Ev Gol</small><strong id="statHomeGoal">--%</strong></div><div><small>Dep Gol</small><strong id="statAwayGoal">--%</strong></div><div><small>Ort. Gol</small><strong id="statAvgGoals">--</strong></div><div><small>Ort. İY Gol</small><strong id="statAvgHalfGoals">--</strong></div></article>
-</section>
-<section id="matches" class="panel matches-panel"><div class="panel-head"><div><span class="kicker">SONUÇLAR</span><h2>Eşleşen maçlar</h2></div><div class="table-actions"><span class="filter-summary" id="filterSummary">Filtre uygulanmadı</span><input id="tableSearch" type="search" placeholder="Lig veya takım ara"></div></div><div class="table-wrapper"><table><thead><tr><th>Lig</th><th>Ev Sahibi</th><th>Deplasman</th><th>İlk Yarı</th><th>Maç Sonucu</th><th>Benzerlik</th></tr></thead><tbody id="tableBody"><tr class="empty-row"><td colspan="6"><div class="empty-state"><span>⌁</span><strong>Henüz analiz yapılmadı</strong><small>Oranları girip Analiz Et butonuna bas.</small></div></td></tr></tbody></table></div></section>
-<footer>ORANLAB PRO © 2026 · Profesyonel oran analiz paneli</footer>
-</main></div><div id="toast" class="toast"></div><script src="ui.js?v=6.0"></script><script src="app.js?v=6.0"></script></body></html>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="#analysis" aria-label="ORANLAB PRO ana sayfa">
+        <img src="logo.svg" alt="ORANLAB PRO">
+        <div class="brand-copy">
+          <div><strong>ORANLAB</strong><b>PRO</b></div>
+          <span><em id="dbCount">1.000.000+</em> Maç Analizi <i>✓</i></span>
+        </div>
+      </a>
+      <nav class="main-nav" aria-label="Ana menü">
+        <a class="active" href="#analysis"><span>▥</span>Analiz</a>
+        <a href="#matches"><span>◷</span>Geçmiş</a>
+        <a href="#stats"><span>♕</span>Ligler</a>
+        <a href="#"><span>⚙</span>Ayarlar</a>
+        <a href="#"><span>?</span>Yardım</a>
+      </nav>
+      <button id="themeButton" class="theme-button" type="button" title="Tema değiştir">☾</button>
+    </header>
+
+    <main>
+      <section id="analysis" class="analysis-card card">
+        <div class="card-title"><span class="title-icon">▥</span><h1>ORAN GİRİŞİ</h1><button id="clearButton" class="clear-button" type="button">Temizle</button></div>
+        <form id="analysisForm">
+          <div class="odds-grid">
+            <label><span>MS1</span><input id="ms1" name="ms1" type="number" step="0.01" min="1" placeholder="1.85" autocomplete="off"></label>
+            <label><span>MSX</span><input id="msx" name="msx" type="number" step="0.01" min="1" placeholder="3.45" autocomplete="off"></label>
+            <label><span>MS2</span><input id="ms2" name="ms2" type="number" step="0.01" min="1" placeholder="4.20" autocomplete="off"></label>
+          </div>
+          <div class="divider"></div>
+          <div class="filter-grid">
+            <div class="filter-block match-mode-block">
+              <div class="label-row"><span>EŞLEŞME TÜRÜ</span><i>i</i></div>
+              <div class="segmented">
+                <label><input type="radio" name="matchMode" value="exact"><b>Tam Eşleşme</b></label>
+                <label><input type="radio" name="matchMode" value="tolerance-002" checked><b>±0.02</b></label>
+                <label><input type="radio" name="matchMode" value="tolerance-005"><b>±0.05</b></label>
+              </div>
+            </div>
+            <div class="filter-block half-block">
+              <div class="label-row"><span>İLK YARI SKORU</span><i>i</i></div>
+              <div class="score-input"><input id="halfHome" name="halfHome" type="number" inputmode="numeric" min="0" max="20" placeholder="1"><b>−</b><input id="halfAway" name="halfAway" type="number" inputmode="numeric" min="0" max="20" placeholder="0"></div>
+            </div>
+            <label class="filter-block barem-block">
+              <div class="label-row"><span>BAREM</span><i>i</i></div>
+              <input id="barem" name="barem" inputmode="decimal" placeholder="2.5" autocomplete="off">
+            </label>
+            <label class="filter-block year-block">
+              <div class="label-row"><span>YIL</span></div>
+              <select id="year" name="year"><option value="">Tüm yıllar</option></select>
+            </label>
+          </div>
+          <button class="analyze" type="submit"><span class="chart-mark">⌁</span><strong>ANALİZ ET</strong></button>
+          <p class="hero-status"><small>Veritabanı bağlantısı kontrol ediliyor</small></p>
+        </form>
+      </section>
+
+      <section class="summary-card card" aria-label="Eşleşme özeti">
+        <div><span class="summary-icon people">♟</span><p>TOPLAM ORAN EŞLEŞMESİ<strong id="oddsTotal">0 <small>maç</small></strong></p></div>
+        <i class="summary-divider"></i>
+        <div><span class="summary-icon filter">▽</span><p>İLK YARI FİLTRESİ SONRASI<strong id="filteredTotal">0 <small>maç</small></strong></p></div>
+      </section>
+
+      <section id="stats" class="stats-grid">
+        <article class="metric green"><div class="metric-head"><span>♕</span><b>MS1</b></div><strong id="statMs1">--%</strong><small id="countMs1">0 / 0 maç</small><i><b></b></i></article>
+        <article class="metric blue"><div class="metric-head"><span>×</span><b>MSX</b></div><strong id="statMsx">--%</strong><small id="countMsx">0 / 0 maç</small><i><b></b></i></article>
+        <article class="metric purple"><div class="metric-head"><span>②</span><b>MS2</b></div><strong id="statMs2">--%</strong><small id="countMs2">0 / 0 maç</small><i><b></b></i></article>
+        <article class="metric orange"><div class="metric-head"><span>▦</span><b>KG VAR</b></div><strong id="statKg">--%</strong><small id="countKg">0 / 0 maç</small><i><b></b></i></article>
+        <article class="metric red"><div class="metric-head"><span>↗</span><b>2.5 ÜST</b></div><strong id="statMs25">--%</strong><small id="countMs25">0 / 0 maç</small><i><b></b></i></article>
+        <article class="metric cyan"><div class="metric-head"><span>◷</span><b>İY 0.5 ÜST</b></div><strong id="statIy05">--%</strong><small id="countIy05">0 / 0 maç</small><i><b></b></i></article>
+      </section>
+
+      <section class="insight-grid">
+        <article class="card result-card">
+          <h2>SONUÇ DAĞILIMI</h2>
+          <div class="result-body">
+            <div class="donut" id="resultDonut"><div><strong id="donutMain">--%</strong><span>MS1</span></div></div>
+            <div class="legend">
+              <p><i class="lg-green"></i><span>MS1<small id="legendMs1">0 maç</small></span></p>
+              <p><i class="lg-blue"></i><span>MSX<small id="legendMsx">0 maç</small></span></p>
+              <p><i class="lg-purple"></i><span>MS2<small id="legendMs2">0 maç</small></span></p>
+            </div>
+          </div>
+          <div class="total-pill">Toplam <b id="chartTotal">0</b> Maç</div>
+        </article>
+
+        <article class="card confidence-card">
+          <h2>GÜVEN SKORU</h2>
+          <div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50"></circle><circle id="confidenceRing" cx="60" cy="60" r="50"></circle></svg><div><strong id="confidenceValue">--</strong><span>/100</span></div></div>
+          <h3 id="confidenceLabel">ANALİZ BEKLENİYOR</h3>
+          <div class="stars" id="confidenceStars">☆ ☆ ☆ ☆ ☆</div>
+          <p id="sampleInfo">Oranları girdikten sonra örneklem güveni hesaplanır.</p>
+          <i class="confidence-track"><b id="confidenceBar"></b></i>
+        </article>
+
+        <article class="card score-card">
+          <h2>SKOR DAĞILIMI</h2>
+          <div id="scoreBars" class="score-bars"><p><b>--</b><i><em></em></i><span>0 (%0)</span></p><p><b>--</b><i><em></em></i><span>0 (%0)</span></p><p><b>--</b><i><em></em></i><span>0 (%0)</span></p></div>
+          <div class="extra-stats"><span>Ort. Gol <b id="statAvgGoals">--</b></span><span>Ort. İY Gol <b id="statAvgHalfGoals">--</b></span><span>1.5 Üst <b id="statMs15">--%</b></span><span>Ev Gol <b id="statHomeGoal">--%</b></span><span>Dep Gol <b id="statAwayGoal">--%</b></span></div>
+        </article>
+      </section>
+
+      <section id="matches" class="matches-card card">
+        <div class="matches-head">
+          <h2><span>☷</span>EŞLEŞEN MAÇLAR</h2>
+          <div class="table-actions"><button id="excelButton" type="button">▣ Excel İndir</button><label>⌕<input id="tableSearch" type="search" placeholder="Filtrele"></label></div>
+        </div>
+        <div class="filter-note"><span id="filterSummary">Filtre uygulanmadı</span><b id="resultCount">0 eşleşme</b></div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>YIL</th><th>LİG</th><th>EV SAHİBİ</th><th>DEPLASMAN</th><th>İY</th><th>MS</th><th>ORANLAR (1-X-2)</th><th>BENZERLİK</th></tr></thead>
+            <tbody id="tableBody"><tr class="empty-row"><td colspan="8"><div class="empty-state"><span>⌁</span><strong>Henüz analiz yapılmadı</strong><small>Oranları girip Analiz Et butonuna bas.</small></div></td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer><span><b>ORANLAB PRO</b> © 2026 · Tüm hakları saklıdır.</span><span>✓ Veri Kaynağı: 1.000.000+ Maç</span></footer>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="ui.js?v=7.0"></script>
+  <script src="app.js?v=7.0"></script>
+</body>
+</html>
