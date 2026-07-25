@@ -111,7 +111,7 @@ function topScores(scoreMap, total) {
 app.get('/api/status', (_req, res) => {
   const count = db.prepare('SELECT COUNT(*) AS count FROM matches').get().count;
   const years = db.prepare(`SELECT DISTINCT CAST(year AS INTEGER) AS year FROM matches WHERE CAST(year AS INTEGER) BETWEEN 1900 AND 2100 ORDER BY year DESC`).all().map((row) => row.year);
-  res.json({ ok: true, version: '6.0-modern', records: count, years });
+  res.json({ ok: true, version: '6.0', records: count, years });
 });
 
 app.get('/api/search', (req, res) => {
@@ -205,7 +205,7 @@ async function startServer() {
     await extractDatabase();
     db = new Database(runtimeDb, { readonly: true });
     db.pragma('query_only = ON');
-    app.listen(PORT, '0.0.0.0', () => console.log(`ORANLAB PRO V6 Modern http://0.0.0.0:${PORT}`));
+    app.listen(PORT, '0.0.0.0', () => console.log(`ORANLAB PRO V6 http://0.0.0.0:${PORT}`));
   } catch (error) {
     console.error('Başlatma hatası:', error);
     process.exit(1);

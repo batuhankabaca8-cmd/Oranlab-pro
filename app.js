@@ -23,7 +23,7 @@
   fetch('/api/status')
     .then((response) => response.json())
     .then((data) => {
-      if (statusText) statusText.textContent = `${data.records.toLocaleString('tr-TR')} maç kaydı aktif · v${data.version}`;
+      if (statusText) statusText.textContent = `${data.records.toLocaleString('tr-TR')} maç kaydı aktif · v${data.version}`; const dbCount=document.getElementById('dbCount'); if(dbCount) dbCount.textContent=`${data.records.toLocaleString('tr-TR')} maç`; 
       const years = Array.isArray(data.years) ? data.years : [];
       if (yearSelect) yearSelect.innerHTML = '<option value="">Tüm yıllar</option>' + years
         .map((year) => `<option value="${year}">${year}</option>`)
